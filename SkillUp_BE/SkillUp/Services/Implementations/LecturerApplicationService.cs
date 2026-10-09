@@ -179,7 +179,7 @@ namespace SkillUp.Services.Implementations
             var userId = _currentUserService.UserId;
             if (userId == null) return false;
 
-            if (_currentUserService.RoleId != 2)
+            if (_currentUserService.RoleId != 3)
             {
                 return false;
             }

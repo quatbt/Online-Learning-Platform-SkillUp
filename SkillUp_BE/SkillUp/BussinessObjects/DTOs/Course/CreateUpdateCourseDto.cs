@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace SkillUp.BussinessObjects.DTOs.Course
 {
@@ -18,11 +18,5 @@ namespace SkillUp.BussinessObjects.DTOs.Course
 
         [Required]
         public int SubCategoryId { get; set; }
-
-        /// <summary>
-        /// Bật AI hỗ trợ học sinh cho khóa học.
-        /// Nullable để backend có thể phân biệt khi client không gửi.
-        /// </summary>
-        public bool? IsAiSupport { get; set; }
     }
 }

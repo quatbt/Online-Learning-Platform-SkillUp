@@ -1,7 +1,7 @@
-﻿using SkillUp.BussinessObjects.Dtos.Section;
+using SkillUp.BussinessObjects.Dtos.Section;
 using SkillUp.BussinessObjects.DTOs.Section;
 
-namespace SkillUp.Bussiness.Services
+namespace SkillUp.Services.Interfaces
 {
     public interface ISectionService
     {

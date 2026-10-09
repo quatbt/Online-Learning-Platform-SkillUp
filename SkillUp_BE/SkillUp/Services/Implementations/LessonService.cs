@@ -1,11 +1,11 @@
-﻿using SkillUp.BussinessObjects.DTOs.Asset;
+using SkillUp.BussinessObjects.DTOs.Asset;
 using SkillUp.BussinessObjects.DTOs.Lesson;
 using SkillUp.BussinessObjects.Models;
 using SkillUp.Repositories.Implementations;
 using SkillUp.Repositories.Interfaces;
 using SkillUp.Services.Common;
 using SkillUp.Services.Interfaces;
-using SkillUp.Services.Rag.Subtitle;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace SkillUp.Services.Implementations
@@ -20,9 +20,8 @@ namespace SkillUp.Services.Implementations
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IStudentRepository _studentRepository;
         private readonly IStudentProgressRepository _studentProgressRepository;
-        private readonly IQdrantService _qdrantService;
-        private readonly IAiSupportBackgroundJobService _aiSupportBackgroundJobService;
         private readonly INotifyService _notifyService;
+
 
         public LessonService(
             ILessonRepository lessonRepository,
@@ -33,8 +32,6 @@ namespace SkillUp.Services.Implementations
             ICloudinaryService cloudinaryService,
             IStudentRepository studentRepository,
             IStudentProgressRepository studentProgressRepository,
-            IQdrantService qdrantService,
-            IAiSupportBackgroundJobService aiSupportBackgroundJobService,
             INotifyService notifyService)
         {
             _lessonRepository = lessonRepository;
@@ -45,10 +42,9 @@ namespace SkillUp.Services.Implementations
             _cloudinaryService = cloudinaryService;
             _studentRepository = studentRepository;
             _studentProgressRepository = studentProgressRepository;
-            _qdrantService = qdrantService;
-            _aiSupportBackgroundJobService = aiSupportBackgroundJobService;
             _notifyService = notifyService;
         }
+
 
         public async Task<IEnumerable<GetLessonResponseDto>> GetAllLessonsAsync()
         {
@@ -199,12 +195,6 @@ namespace SkillUp.Services.Implementations
             await _lessonRepository.SaveChangesAsync();
 
 
-            if (videoCreated && (course.IsAiSupport ?? false))
-            {
-                // Fire-and-forget subtitle generation
-                await _aiSupportBackgroundJobService.TriggerLessonSubtitleJobAsync(lesson.Id, force: true);
-            }
-
             try
             {
                 await _notifyService.SendCourseUpdateNotificationAsync(
@@ -321,23 +311,6 @@ namespace SkillUp.Services.Implementations
             await _lessonRepository.SaveChangesAsync();
 
 
-
-            if (videoChanged)
-            {
-                try
-                {
-                    await _qdrantService.DeleteVectorsByLessonAsync(lesson.Id);
-                }
-                catch
-                {
-                    // ignore cleanup failures to avoid blocking lesson update
-                }
-
-                if (course.IsAiSupport == true)
-                {
-                    await _aiSupportBackgroundJobService.TriggerLessonSubtitleJobAsync(lesson.Id, force: true);
-                }
-            }
             // Gửi thông báo cập nhật khóa học cho học viên
             try
             {

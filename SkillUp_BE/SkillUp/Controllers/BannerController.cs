@@ -26,7 +26,7 @@ namespace SkillUp.Controllers
 		{
 			try
 			{
-				if (_currentUserService.RoleId != 3)
+				if (_currentUserService.RoleId != 2)
 				{
 					return Unauthorized(new APIReturn
 					{
@@ -107,7 +107,7 @@ namespace SkillUp.Controllers
 		{
 			try
 			{
-				if (_currentUserService.RoleId != 3)
+				if (_currentUserService.RoleId != 2)
 				{
 					return Unauthorized(new APIReturn
 					{
@@ -154,7 +154,7 @@ namespace SkillUp.Controllers
 		{
 			try
 			{
-				if (_currentUserService.RoleId != 3)
+				if (_currentUserService.RoleId != 2)
 				{
 					return Unauthorized(new APIReturn
 					{
@@ -201,7 +201,7 @@ namespace SkillUp.Controllers
 		{
 			try
 			{
-				if (_currentUserService.RoleId != 3)
+				if (_currentUserService.RoleId != 2)
 				{
 					return Unauthorized(new APIReturn
 					{

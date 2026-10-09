@@ -59,7 +59,7 @@ namespace SkillUp.API.Controllers
         // 2. VIEW ALL (Dành cho Moderator)
         // ==========================================
         [HttpGet("view-all")]
-        [Authorize(Roles = "Content Morderator")] // Yêu cầu Role chính xác là "Moderator"
+        [Authorize(Roles = "ContentModerator")] // Yêu cầu Role chính xác là "Moderator"
         public async Task<IActionResult> GetAllReports()
         {
             try
@@ -79,7 +79,7 @@ namespace SkillUp.API.Controllers
         }
 
         [HttpGet("view-grouped")]
-        [Authorize(Roles = "Content Morderator")] // Yêu cầu Role chính xác là "Moderator"
+        [Authorize(Roles = "ContentModerator")] // Yêu cầu Role chính xác là "Moderator"
         public async Task<IActionResult> GetGroupedReports()
         {
             try
@@ -100,7 +100,7 @@ namespace SkillUp.API.Controllers
 
        
         [HttpPut("{id}/status")]
-        [Authorize(Roles = "Content Morderator")] // Yêu cầu Role chính xác là "Moderator"
+        [Authorize(Roles = "ContentModerator")] // Yêu cầu Role chính xác là "Moderator"
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateReportStatusDto request)
         {
             try

@@ -55,7 +55,6 @@ function SectionCard({
   courseId,
   onUpdate,
   validation,
-  courseIsAiSupport = false,
 }) {
   return (
     <Card
@@ -251,7 +250,6 @@ function SectionCard({
                               courseId={courseId}
                               sectionId={section.id}
                               onRefreshCourse={onUpdate}
-                              courseIsAiSupport={courseIsAiSupport}
                             />
                           </div>
                         )}

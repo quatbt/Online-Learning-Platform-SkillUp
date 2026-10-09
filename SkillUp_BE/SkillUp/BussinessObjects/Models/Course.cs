@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace SkillUp.BussinessObjects.Models;
@@ -32,8 +32,6 @@ public partial class Course
     public Guid LecturerId { get; set; }
 
     public decimal? OriginalPrice { get; set; }
-
-    public bool? IsAiSupport { get; set; }
 
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 

@@ -1,6 +1,6 @@
-﻿using SkillUp.BussinessObjects.DTOs;
+using SkillUp.BussinessObjects.DTOs;
 
-namespace SkillUp.BusinessLogic.Services
+namespace SkillUp.Services.Interfaces
 {
     public interface IVoucherTypeService
     {

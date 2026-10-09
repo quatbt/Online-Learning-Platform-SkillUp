@@ -1,8 +1,9 @@
-﻿using SkillUp.BussinessObjects.DTOs;
+using SkillUp.BussinessObjects.DTOs;
 using SkillUp.BussinessObjects.Models;
-using SkillUp.DataAccess.Repositories;
+using SkillUp.Repositories.Interfaces;
+using SkillUp.Services.Interfaces;
 
-namespace SkillUp.BusinessLogic.Services
+namespace SkillUp.Services.Implementations
 {
     public class VoucherTypeService : IVoucherTypeService
     {

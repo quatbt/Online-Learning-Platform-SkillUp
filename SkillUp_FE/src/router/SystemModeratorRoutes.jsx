@@ -15,7 +15,7 @@ const SystemModeratorRoutes = () => {
       <Route
         path="/*"
         element={
-          <ProtectedRoute allowedRoles={["System Morderator"]}>
+          <ProtectedRoute allowedRoles={["SystemModerator", "System Morderator"]}>
             <SystemModeratorLayout />
           </ProtectedRoute>
         }

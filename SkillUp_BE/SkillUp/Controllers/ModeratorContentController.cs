@@ -27,7 +27,7 @@ namespace SkillUp.Controllers
             {
                 // Có thể thêm kiểm tra quyền Admin/Moderator ở đây
                 var roleId = _currentUserService.RoleId;
-                if (roleId != 3) 
+                if (roleId != 2)
                 {
                     return Unauthorized(new APIReturn
                     {

@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SkillUp.BussinessObjects.Models;
+using SkillUp.Repositories.Interfaces;
 
-namespace SkillUp.DataAccess.Repositories
+namespace SkillUp.Repositories.Implementations
 {
     public class VoucherTypeRepository : IVoucherTypeRepository
     {

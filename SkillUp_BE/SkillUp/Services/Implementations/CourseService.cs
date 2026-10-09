@@ -1,4 +1,4 @@
-﻿using CloudinaryDotNet;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Identity.Client;
 using SkillUp.BussinessObjects.DTOs.Asset;
@@ -15,7 +15,7 @@ using SkillUp.Repositories.Implementations;
 using SkillUp.Repositories.Interfaces;
 using SkillUp.Services.Common;
 using SkillUp.Services.Interfaces;
-using SkillUp.Services.Rag.Subtitle;
+
 
 namespace SkillUp.Services.Implementations
 {
@@ -32,10 +32,10 @@ namespace SkillUp.Services.Implementations
 		private readonly IStudentRepository _studentRepository;
         private readonly IStudentProgressRepository _studentProgressRepository;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IAiSupportBackgroundJobService _aiSupportBackgroundJobService;
         private readonly IRatingRepository _ratingRepository;
 
-        public CourseService(ICourseRepository courseRepository, ILecturerRepository lecturerRepository, ICloudinaryService cloudinaryService, IAccountRepository accountRepository, ICategoryRepository categoryRepository, IEmailService emailService, INotifyService notifyService, IEnrollmentRepository enrollmentRepository, IStudentRepository studentRepository, IStudentProgressRepository studentProgressRepository, ICurrentUserService currentUserService, IAiSupportBackgroundJobService aiSupportBackgroundJobService, IRatingRepository ratingRepository)
+
+        public CourseService(ICourseRepository courseRepository, ILecturerRepository lecturerRepository, ICloudinaryService cloudinaryService, IAccountRepository accountRepository, ICategoryRepository categoryRepository, IEmailService emailService, INotifyService notifyService, IEnrollmentRepository enrollmentRepository, IStudentRepository studentRepository, IStudentProgressRepository studentProgressRepository, ICurrentUserService currentUserService, IRatingRepository ratingRepository)
         {
             _courseRepository = courseRepository;
             _lecturerRepository = lecturerRepository;
@@ -48,9 +48,9 @@ namespace SkillUp.Services.Implementations
             _studentRepository = studentRepository;
             _studentProgressRepository = studentProgressRepository;
             _currentUserService = currentUserService;
-            _aiSupportBackgroundJobService = aiSupportBackgroundJobService;
             _ratingRepository = ratingRepository;
         }
+
 
         public async Task<CourseResponseDto?> CreateDraftCourseAsync(CreateUpdateCourseDto request, Guid accId)
 		{
@@ -61,6 +61,12 @@ namespace SkillUp.Services.Implementations
 				throw new Exception("Không tìm thấy giảng viên cho tài khoản này!");
 			}
 
+			// Validate SubCategoryId exists
+			var categories = await _categoryRepository.GetCategoriesWithSubCategoriesAsync();
+			var subCategoryExists = categories.Any(c => c.SubCategories.Any(sc => sc.Id == request.SubCategoryId));
+			if (!subCategoryExists)
+				throw new Exception($"SubCategory với Id={request.SubCategoryId} không tồn tại!");
+
 			var course = new Course
 			{
 				Id = Guid.NewGuid(),
@@ -69,7 +75,6 @@ namespace SkillUp.Services.Implementations
 				Image = imageUrl,
 				SubCategoryId = request.SubCategoryId,
 				LecturerId = lecturer.Id,
-				IsAiSupport = request.IsAiSupport ?? false,
 				Price = -1,
 				EnrollmentCount = 0,
 				Rating = 0,
@@ -92,8 +97,7 @@ namespace SkillUp.Services.Implementations
 				Description = course.Description,
 				Image = course.Image,
 				Status = course.Status,
-				LecturerId = lecturer.Id,
-				IsAiSupport = course.IsAiSupport
+				LecturerId = lecturer.Id
 			};
 		}
 		//giảng viên xóa khóa học
@@ -193,31 +197,17 @@ namespace SkillUp.Services.Implementations
 
             if (request.SubCategoryId.HasValue && request.SubCategoryId.Value > 0)
             {
+                var cats = await _categoryRepository.GetCategoriesWithSubCategoriesAsync();
+                var scExists = cats.Any(c => c.SubCategories.Any(sc => sc.Id == request.SubCategoryId.Value));
+                if (!scExists)
+                    throw new Exception($"SubCategory với Id={request.SubCategoryId.Value} không tồn tại!");
                 course.SubCategoryId = request.SubCategoryId.Value;
-            }
-
-            var wasAiEnabledBefore = course.IsAiSupport ?? false;
-            var needsToGenerateSubtitles = false;
-
-            if (request.IsAiSupport.HasValue)
-            {
-                var newAiSupportValue = request.IsAiSupport.Value;
-                
-                if (!wasAiEnabledBefore && newAiSupportValue)
-                {
-                    needsToGenerateSubtitles = true;
-                }
-
-                course.IsAiSupport = newAiSupportValue;
             }
 
             course.UpdatedAt = DateTime.Now;
             _courseRepository.UpdateCourse(course);
             await _courseRepository.SaveChangesAsync();
 
-            {
-                await _aiSupportBackgroundJobService.TriggerCourseSubtitleJobAsync(course.Id);
-            }
 
             return new CourseResponseDto
             {
@@ -226,8 +216,7 @@ namespace SkillUp.Services.Implementations
                 Description = course.Description,
                 Image = course.Image,
                 Status = course.Status,
-                LecturerId = lecturer.Id,
-                IsAiSupport = course.IsAiSupport
+                LecturerId = lecturer.Id
             };
         }
         public async Task<bool> ToggleBanCourseAsync(Guid courseId, Guid adminAccountId)
@@ -239,7 +228,7 @@ namespace SkillUp.Services.Implementations
 				throw new Exception("Không tìm thấy tài khoản quản trị viên!");
 			}
 
-			var isAdminOrMod = adminAccount.RoleId == 3;
+			var isAdminOrMod = adminAccount.RoleId == 2;
 
 			if (!isAdminOrMod)
 			{
@@ -325,7 +314,7 @@ namespace SkillUp.Services.Implementations
 
 		public async Task<List<CourseMorderatorResponseDto>> GetAllCourseAsync(Guid accountId)
 		{
-			await IsAuthorizedAsync(accountId, 3);
+			await IsAuthorizedAsync(accountId, 2);
 
 			var courses = await _courseRepository.GetAllCourseAsync();
 			return courses.Select(course => new CourseMorderatorResponseDto
@@ -494,7 +483,7 @@ namespace SkillUp.Services.Implementations
 		public async Task<bool> PublishCourseForModerator(Guid courseId, Guid accountId, bool decision, string reason)
 		{
 			var account = await _accountRepository.GetByIdAsync(accountId);
-			if (account.RoleId != 3)
+			if (account.RoleId != 2)
 				throw new UnauthorizedAccessException("Bạn không có quyền thực hiện chức năng này!");
 			var course = await _courseRepository.GetCourseByIdAsync(courseId);
 			if (course == null)
@@ -663,7 +652,6 @@ namespace SkillUp.Services.Implementations
                 subCategoryId = course.SubCategoryId,
                 CategoryName = course.SubCategory?.Category?.Name ?? "",
                 SubCategoryName = course.SubCategory?.Name ?? "",
-                IsAiSupport = course.IsAiSupport ?? false,
                 Lecturer = course.Lecturer != null ? new LecturerCourseDetailDto
                 {
                     AccountId = course.Lecturer.AccountId,
@@ -790,7 +778,6 @@ namespace SkillUp.Services.Implementations
                 subCategoryId = course.SubCategoryId,
                 CategoryName = course.SubCategory?.Category?.Name ?? "",
                 SubCategoryName = course.SubCategory?.Name ?? "",
-                IsAiSupport = course.IsAiSupport,
                 Lecturer = course.Lecturer != null ? new LecturerCourseDetailDto
                 {
                     AccountId = course.Lecturer.AccountId,

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SkillUp.BussinessObjects.DTOs.NotifyDto;
@@ -11,13 +11,13 @@ namespace SkillUp.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly IBackgroundTaskQueue  _taskQueue;
+        private readonly INotifyService _notifyService;
 		private readonly IPayrollService _payrollService;
 		private readonly ICurrentUserService _currentUserService;
 
-		public AdminController(IBackgroundTaskQueue taskQueue, IPayrollService payrollService, ICurrentUserService currentUserService)
+		public AdminController(INotifyService notifyService, IPayrollService payrollService, ICurrentUserService currentUserService)
         {
-            _taskQueue = taskQueue;
+            _notifyService = notifyService;
             _payrollService = payrollService;
             _currentUserService = currentUserService;
 		}
@@ -28,20 +28,11 @@ namespace SkillUp.Controllers
             {
                 return BadRequest(new APIReturn { code = 400, message = "Dữ liệu không hợp lệ", data = new List<object> { ModelState } });
             }
-            await _taskQueue.QueueBackgroundWorkItemAsync(async (serviceProvider, token) =>
-            {
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    var notifyService = scope.ServiceProvider.GetRequiredService<INotifyService>();
-                    Console.WriteLine($"[Background] Bắt đầu gửi thông báo: {request.Title}");
-                    int count = await notifyService.CreateSystemNotificationAsync(request);
-                    Console.WriteLine($"[Background] Đã gửi xong cho {count} người dùng.");
-                }
-            });
+            int count = await _notifyService.CreateSystemNotificationAsync(request);
             return Ok(new APIReturn
             {
                 code = 200,
-                message = "Hệ thống đang gửi thông báo trong nền. Vui lòng đợi trong giây lát.",
+                message = $"Đã gửi thông báo thành công cho {count} người dùng.",
                 data = null
             });
         }

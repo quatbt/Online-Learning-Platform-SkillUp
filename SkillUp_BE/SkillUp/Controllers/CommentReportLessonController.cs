@@ -40,7 +40,7 @@ namespace SkillUp.Controllers
 
         // API cho MODERATOR: Xem báo cáo đang chờ
         [HttpGet("GetPending")]
-        [Authorize(Roles = "Content Morderator")] // <-- Đổi Role
+        [Authorize(Roles = "ContentModerator")] // <-- Đổi Role
         public async Task<IActionResult> GetPendingReports()
         {
             var reports = await _reportService.GetPendingReportsAsync();
@@ -48,7 +48,7 @@ namespace SkillUp.Controllers
         }
 
         [HttpPut("UpdateStatus")]
-        [Authorize(Roles = "Content Morderator")]
+        [Authorize(Roles = "ContentModerator")]
         public async Task<IActionResult> UpdateStatus([FromBody] UpdateCommentReportStatusDto dto)
         {
             try

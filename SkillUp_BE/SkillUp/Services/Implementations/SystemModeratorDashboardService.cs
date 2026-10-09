@@ -17,7 +17,7 @@ namespace SkillUp.Services.Implementations
 
 		public Task<SysmodDashboardDto> GetSysModDashboardStatisticsAsync()
 		{
-			if(_currentUserService.RoleId != 2)
+			if(_currentUserService.RoleId != 3)
 			{
 				throw new Exception("Bạn không phải System Moderator!");
 			}

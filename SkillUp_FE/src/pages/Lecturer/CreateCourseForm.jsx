@@ -11,7 +11,6 @@ import {
 import { courseAPI } from "@/api/courseAPI";
 import { toast } from "react-toastify";
 import CategorySelector from "./components/CategorySelector";
-import AiTermsDialog from "./components/AiTermsDialog";
 
 function CreateCourseForm({ isOpen, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -20,12 +19,10 @@ function CreateCourseForm({ isOpen, onClose, onSuccess }) {
     categoryId: 0,
     subCategoryId: undefined,
     image: null,
-    isAiSupport: false,
   });
 
   const [creating, setCreating] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
-  const [showAiTermsDialog, setShowAiTermsDialog] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -89,7 +86,6 @@ function CreateCourseForm({ isOpen, onClose, onSuccess }) {
       form.append("title", formData.title);
       form.append("description", formData.description);
       form.append("categoryId", formData.categoryId.toString());
-      form.append("IsAiSupport", formData.isAiSupport ? "true" : "false");
 
       if (formData.subCategoryId) {
         form.append("subCategoryId", formData.subCategoryId.toString());
@@ -111,7 +107,6 @@ function CreateCourseForm({ isOpen, onClose, onSuccess }) {
           categoryId: 0,
           subCategoryId: undefined,
           image: null,
-          isAiSupport: false,
         });
         setPreviewImage(null);
 
@@ -203,58 +198,6 @@ function CreateCourseForm({ isOpen, onClose, onSuccess }) {
             />
           </div>
 
-          {/* AI Support Toggle */}
-          <div className="p-4 border border-gray-200 rounded-lg bg-white shadow-sm space-y-2">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-900">
-                  AI hỗ trợ học viên
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  Bật tùy chọn này để hệ thống tự động tạo phụ đề và chatbot tư
-                  vấn cho từng bài học video.
-                </p>
-              </div>
-              <label className="inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={formData.isAiSupport}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      // Khi bật → Hiện popup điều khoản
-                      setShowAiTermsDialog(true);
-                    } else {
-                      // Khi tắt → Tắt ngay
-                      setFormData((prev) => ({
-                        ...prev,
-                        isAiSupport: false,
-                      }));
-                    }
-                  }}
-                />
-                <div
-                  className={`w-11 h-6 rounded-full relative transition-colors duration-300 ease-in-out ${
-                    formData.isAiSupport ? "bg-yellow-400" : "bg-gray-200"
-                  }`}
-                >
-                  <div
-                    className={`absolute top-[2px] h-5 w-5 bg-white rounded-full shadow-md transition-all duration-300 ease-in-out ${
-                      formData.isAiSupport
-                        ? "translate-x-5 left-[2px] shadow-lg"
-                        : "translate-x-0 left-[2px]"
-                    }`}
-                  />
-                </div>
-              </label>
-            </div>
-            {formData.isAiSupport && (
-              <div className="text-xs text-green-600 flex items-center gap-2 animate-in fade-in slide-in-from-top duration-300">
-                ✅ Phụ đề sẽ được tạo ngay sau khi bạn tải video lên.
-              </div>
-            )}
-          </div>
-
           {/* Image Upload */}
           <div>
             <div className="space-y-4">
@@ -312,18 +255,6 @@ function CreateCourseForm({ isOpen, onClose, onSuccess }) {
         </form>
       </CardContent>
 
-      {/* AI Terms Dialog */}
-      <AiTermsDialog
-        open={showAiTermsDialog}
-        onClose={() => setShowAiTermsDialog(false)}
-        onAccept={() => {
-          setFormData((prev) => ({
-            ...prev,
-            isAiSupport: true,
-          }));
-          setShowAiTermsDialog(false);
-        }}
-      />
     </Card>
   );
 }

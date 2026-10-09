@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SkillUp.Bussiness.Services;
+using SkillUp.Services.Interfaces;
 using SkillUp.BussinessObjects.Dtos.Section;
 using SkillUp.BussinessObjects.DTOs.Section;
 using SkillUp.ExceptionHandling;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SkillUp.Api.Controllers
+namespace SkillUp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

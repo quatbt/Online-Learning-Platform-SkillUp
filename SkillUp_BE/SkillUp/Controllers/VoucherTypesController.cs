@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SkillUp.BusinessLogic.Services;
+using SkillUp.Services.Interfaces;
 using SkillUp.BussinessObjects.DTOs;
 using SkillUp.ExceptionHandling; // Import file APIReturn
 
-namespace SkillUp.API.Controllers
+namespace SkillUp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,7 +19,7 @@ namespace SkillUp.API.Controllers
 
         // GET: api/VoucherTypes/GetAllVoucherTypes
         [HttpGet("GetAllVoucherTypes")]
-        [Authorize(Roles = "Content Morderator")]
+        [Authorize(Roles = "ContentModerator")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -39,7 +39,7 @@ namespace SkillUp.API.Controllers
 
         // GET: api/VoucherTypes/GetVoucherTypesById/5
         [HttpGet("GetVoucherTypesById/{id}")]
-        [Authorize(Roles = "Content Morderator")]
+        [Authorize(Roles = "ContentModerator")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -61,7 +61,7 @@ namespace SkillUp.API.Controllers
 
         // POST: api/VoucherTypes/CreateVoucherTypes
         [HttpPost("CreateVoucherTypes")]
-        [Authorize(Roles = "Content Morderator")]
+        [Authorize(Roles = "ContentModerator")]
         public async Task<IActionResult> Create([FromBody] VoucherTypeRequest request)
         {
             try
@@ -84,7 +84,7 @@ namespace SkillUp.API.Controllers
 
        
         [HttpPut("UpdateVoucherTypes/{id}")]
-        [Authorize(Roles = "Content Morderator")]
+        [Authorize(Roles = "ContentModerator")]
         public async Task<IActionResult> Update(int id, [FromBody] VoucherTypeRequest request)
         {
             try
@@ -109,7 +109,7 @@ namespace SkillUp.API.Controllers
             }
         }
         [HttpPut("UpdateStatus/{id}")]
-        [Authorize(Roles = "Content Morderator")]
+        [Authorize(Roles = "ContentModerator")]
         public async Task<IActionResult> UpdateStatus(int id, [FromQuery] bool isActive)
         {
             try

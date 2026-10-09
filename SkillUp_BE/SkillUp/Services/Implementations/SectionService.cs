@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkillUp.BussinessObjects.Dtos.Section;
 using SkillUp.BussinessObjects.DTOs.Section;
@@ -7,7 +7,7 @@ using SkillUp.BussinessObjects.Models;
 using SkillUp.Repositories.Interfaces;
 using SkillUp.Services.Interfaces;
 
-namespace SkillUp.Bussiness.Services
+namespace SkillUp.Services.Implementations
 {
 	public class SectionService : ISectionService
 	{

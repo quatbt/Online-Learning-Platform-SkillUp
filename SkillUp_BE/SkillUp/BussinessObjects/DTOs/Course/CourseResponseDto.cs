@@ -1,4 +1,4 @@
-﻿namespace SkillUp.BussinessObjects.DTOs.Course
+namespace SkillUp.BussinessObjects.DTOs.Course
 {
     public class CourseResponseDto
     {
@@ -8,6 +8,5 @@
         public string? Image { get; set; }
         public string Status { get; set; }
         public Guid LecturerId { get; set; }
-        public bool? IsAiSupport { get; set; }
     }
 }

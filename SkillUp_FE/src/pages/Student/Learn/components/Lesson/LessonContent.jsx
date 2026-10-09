@@ -11,7 +11,6 @@ import VideoPlayer from "./VideoPlayer.jsx";
 import TextLesson from "./TextLesson.jsx";
 
 import QuizView from "../Quiz/QuizView.jsx";
-import LessonChat from "../LessonChat.jsx";
 import LearningTabs from "./LearningTabs.jsx";
 import { cn } from "@/lib/utils.js";
 
@@ -26,7 +25,6 @@ const LessonContent = ({
   hasPrev,
   lessonId,
   onQuizComplete,
-  isAiSupportEnabled,
 }) => {
   const [videoProgress, setVideoProgress] = useState(0);
   const [marking, setMarking] = useState(false);
@@ -52,9 +50,6 @@ const LessonContent = ({
     item.assets?.filter(
       (asset) => asset.type === "PDF" || asset.url?.endsWith(".pdf")
     ) || [];
-  const showLessonChat =
-    isAiSupportEnabled && item.kind === "Lesson" && item.lessonType === "Video";
-
   // Handle quiz completion
   const handleQuizCompletion = async (passed) => {
     if (passed && !isCompleted) {
@@ -191,12 +186,6 @@ const LessonContent = ({
             Tiếp theo <ChevronRight className="w-5 h-5" />
           </button>
         </div>
-
-        {showLessonChat && (
-          <div className="mb-8">
-            <LessonChat lessonId={lessonId} />
-          </div>
-        )}
 
         {/* Learning Tabs */}
         {item.kind === "Lesson" && item.lessonType === "Video" && (

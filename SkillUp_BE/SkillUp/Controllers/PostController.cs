@@ -209,7 +209,7 @@ namespace SkillUp.Controllers
             }
         }
 
-        [Authorize(Roles = "Content Morderator")] 
+        [Authorize(Roles = "ContentModerator")] 
         [HttpPut("ban/{id}")]
         public async Task<IActionResult> BanPost(Guid id)
         {
@@ -235,7 +235,7 @@ namespace SkillUp.Controllers
         }
 
         // ✅ Unban bài viết (chỉ Moderator)
-        [Authorize(Roles = "Content Morderator")] 
+        [Authorize(Roles = "ContentModerator")] 
         [HttpPut("unban/{id}")]
         public async Task<IActionResult> UnbanPost(Guid id)
         {

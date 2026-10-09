@@ -3,23 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
-using SkillUp.Bussiness.Services;
 using SkillUp.BussinessObjects.Models;
 using SkillUp.Configuration;
+using SkillUp.Data;
 using SkillUp.Hubs;
 using SkillUp.Repositories.Implementations;
 using SkillUp.Repositories.Interfaces;
 using SkillUp.Services.Common;
 using SkillUp.Services.Implementations;
 using SkillUp.Services.Interfaces;
-using SkillUp.Services.Rag.Embedding;
-using SkillUp.Services.Rag.Subtitle;
-using SkillUp.Services.Rag.Chat;
+
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Net.Http.Headers;
-using SkillUp.BusinessLogic.Services;
-using SkillUp.DataAccess.Repositories;
 
 // Clear default claim type mappings để giữ nguyên custom claim types
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -42,29 +38,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddHttpClient();
-builder.Services.Configure<GenSubOptions>(builder.Configuration.GetSection("GenSub"));
-builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
-builder.Services.Configure<QdrantOptions>(builder.Configuration.GetSection("Qdrant"));
-builder.Services.Configure<RagOptions>(builder.Configuration.GetSection("Rag"));
-builder.Services.Configure<OllamaOptions>(builder.Configuration.GetSection("Ollama"));
 
-builder.Services.AddHttpClient(nameof(QdrantService), (sp, client) =>
-{
-    var options = sp.GetRequiredService<IOptions<QdrantOptions>>().Value ?? new QdrantOptions();
-    var endpoint = string.IsNullOrWhiteSpace(options.Endpoint)
-        ? "https://08d02dbc-fd71-4d4a-80e4-4194b2c14301.europe-west3-0.gcp.cloud.qdrant.io"
-        : options.Endpoint;
-
-    client.BaseAddress = new Uri(endpoint.TrimEnd('/') + "/");
-    client.DefaultRequestHeaders.Accept.Clear();
-    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-    if (!string.IsNullOrWhiteSpace(options.ApiKey))
-    {
-        client.DefaultRequestHeaders.Remove("api-key");
-        client.DefaultRequestHeaders.Add("api-key", options.ApiKey);
-    }
-});
 
 // Configure Swagger with JWT Authentication
 builder.Services.AddSwaggerGen(options =>
@@ -170,22 +144,8 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IQuestionBankService, QuestionBankService>();
-builder.Services.AddScoped<GenSubService>();
-builder.Services.AddScoped<IQdrantService, QdrantService>();
-builder.Services.AddScoped<ISubtitleService, SubtitleService>();
-builder.Services.AddScoped<ISubtitleManagementService, SubtitleManagementService>();
-// Embedding Provider - Switch between Gemini and Ollama
-//builder.Services.AddScoped<IEmbeddingProvider, OllamaEmbeddingProvider>();
-builder.Services.AddScoped<IEmbeddingProvider, GeminiEmbeddingProvider>();
-builder.Services.AddScoped<ISubtitleLessonJobService, SubtitleLessonJobService>();
-builder.Services.AddScoped<ISubtitleCourseJobService, SubtitleCourseJobService>();
-builder.Services.AddScoped<IAiSupportBackgroundJobService, AiSupportBackgroundJobService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<IBannerService, BannerService>();
-builder.Services.AddScoped<ILessonChatService, LessonChatService>();
-//ai
-//builder.Services.AddScoped<IChatCompletionProvider, OllamaChatCompletionProvider>();
-builder.Services.AddScoped<IChatCompletionProvider, GeminiChatCompletionProvider>();
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
@@ -278,9 +238,8 @@ builder.Services.AddScoped<IReportCourseService, ReportCourseService>();
 builder.Services.AddScoped<IReportPostRepository, ReportPostRepository>();
 builder.Services.AddScoped<IReportPostService, ReportPostService>();
 
-//background
-builder.Services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-builder.Services.AddHostedService<QueuedHostedService>();
+
+
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"];
@@ -383,6 +342,28 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 var app = builder.Build();
+
+// ── Auto-migrate + Seed ──────────────────────────────────────────────────────
+// Tự động tạo/cập nhật database theo migration và seed data mẫu khi startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<SkillUpContext>();
+    try
+    {
+        // Áp dụng tất cả migration pending (Code First)
+        await db.Database.MigrateAsync();
+
+        // Seed data mẫu (idempotent - chỉ insert khi bảng còn trống)
+        await DbSeeder.SeedAsync(db);
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Lỗi khi migrate / seed database.");
+        throw; // Re-throw để app không start trong trạng thái lỗi
+    }
+}
+// ────────────────────────────────────────────────────────────────────────────
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())

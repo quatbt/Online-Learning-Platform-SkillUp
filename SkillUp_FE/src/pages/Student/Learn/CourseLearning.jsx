@@ -504,7 +504,6 @@ const CourseLearning = () => {
             hasPrev={hasPrev()}
             lessonId={lessonId}
             onQuizComplete={handleQuizComplete}
-            isAiSupportEnabled={courseData.isAiSupport}
           />
         </div>
 

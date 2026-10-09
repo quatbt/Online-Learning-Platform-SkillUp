@@ -921,7 +921,6 @@ function CurriculumTab({ course, courseId, onUpdate }) {
         onAddSectionClick={handleAddSectionClick}
         onUpdate={onUpdate}
         validation={validation}
-        courseIsAiSupport={course?.isAiSupport ?? false}
       />
     </div>
   );
@@ -1053,7 +1052,6 @@ function SectionsList(props) {
     onAddSectionClick,
     onUpdate,
     validation,
-    courseIsAiSupport = false,
   } = props;
 
   if (!sections.length) {
@@ -1227,7 +1225,6 @@ function SectionsList(props) {
                         validation={validation.sectionValidations[section.id]}
                         courseId={courseId}
                         onUpdate={onUpdate}
-                        courseIsAiSupport={courseIsAiSupport}
                       />
                     </div>
                   )}

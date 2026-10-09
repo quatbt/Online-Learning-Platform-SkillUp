@@ -56,7 +56,7 @@ namespace SkillUp.Controllers
       // true là xóa
       // false là reject
         [HttpPut("Resolve")]
-        [Authorize(Roles = "Content Morderator")] // QUAN TRỌNG: Chỉ Admin được phép
+        [Authorize(Roles = "ContentModerator")] // QUAN TRỌNG: Chỉ Admin được phép
         public async Task<IActionResult> ResolveReport([FromBody] ResolveCommentReportDto dto)
         {
             try
@@ -83,7 +83,7 @@ namespace SkillUp.Controllers
             }
         }
         [HttpGet("All")]
-        [Authorize(Roles = "Content Morderator")] // Chỉ Content Moderator mới được xem
+        [Authorize(Roles = "ContentModerator")] // Chỉ Content Moderator mới được xem
         public async Task<IActionResult> GetAllReports()
         {
             try
@@ -103,7 +103,7 @@ namespace SkillUp.Controllers
         }
 
         [HttpGet("Pending")]
-        [Authorize(Roles = "Content Morderator")] // Chỉ Content Moderator mới được xem
+        [Authorize(Roles = "ContentModerator")] // Chỉ Content Moderator mới được xem
         public async Task<IActionResult> GetPendingReports()
 
         {

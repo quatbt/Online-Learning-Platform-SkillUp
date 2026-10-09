@@ -52,7 +52,7 @@ namespace SkillUp.Controllers
         }
 
         [HttpGet("Pending")]
-        [Authorize(Roles = "Content Morderator")] 
+        [Authorize(Roles = "ContentModerator")] 
         public async Task<IActionResult> GetAllPendingReports()
         {
             try
@@ -71,7 +71,7 @@ namespace SkillUp.Controllers
         }
 
         [HttpPut("Resolve/{id}")]
-        [Authorize(Roles = "Content Morderator")]
+        [Authorize(Roles = "ContentModerator")]
         public async Task<IActionResult> ProcessReport([FromRoute] Guid id, [FromBody] ProcessReportDto dto)
         {
             try

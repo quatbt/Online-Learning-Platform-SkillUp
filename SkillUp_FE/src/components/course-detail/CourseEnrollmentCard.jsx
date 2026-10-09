@@ -1,5 +1,5 @@
 // src/components/course-detail/CourseEnrollmentCard.jsx
-import { ShoppingCart, Play, Percent, Coins, Bot } from "lucide-react";
+import { ShoppingCart, Play, Percent, Coins } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -87,13 +87,6 @@ export default function CourseEnrollmentCard({ course, isEnrolled, checkingEnrol
               </div>
             </div>
           </div>
-
-          {course.isAiSupport && (
-            <div className="flex items-center gap-2 text-sm text-[#272343] bg-blue-50 p-2 rounded-md">
-              <Bot className="w-4 h-4 text-blue-500" />
-              <span className="font-medium">Hỗ trợ AI: Phụ đề tự động & Chatbot hỗ trợ học tập</span>
-            </div>
-          )}
 
           <button
             onClick={showLearnNow ? handleLearnNow : handleBuyNow}

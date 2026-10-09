@@ -1,6 +1,6 @@
-﻿using SkillUp.BussinessObjects.Models;
+using SkillUp.BussinessObjects.Models;
 
-namespace SkillUp.DataAccess.Repositories
+namespace SkillUp.Repositories.Interfaces
 {
     public interface IVoucherTypeRepository
     {

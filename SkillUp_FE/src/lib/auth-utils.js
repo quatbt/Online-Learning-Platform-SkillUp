@@ -50,8 +50,10 @@ export const getRedirectPath = (role) => {
   switch (role) {
     case "Admin":
       return "/admin/";
+    case "ContentModerator":
     case "Content Morderator":
       return "/contentmod/";
+    case "SystemModerator":
     case "System Morderator":
       return "/sysmod/";
     case "Lecturer":

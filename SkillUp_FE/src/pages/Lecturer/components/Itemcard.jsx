@@ -15,8 +15,6 @@ import { Button } from "@/components/ui/button";
 import LessonForm from "./Lessonform.jsx";
 import QuizForm from "../Quiz/Quizform.jsx";
 import QuizQuestionManager from "../Quiz/QuizQuestionManager.jsx";
-import SubtitleManagementButton from "./SubtitleManagementButton.jsx";
-
 function ItemCard({
   item,
   onEdit,
@@ -29,7 +27,6 @@ function ItemCard({
   courseId,
   sectionId,
   onRefreshCourse,
-  courseIsAiSupport = false,
 }) {
   const isLesson = item.kind === "Lesson";
   const isQuiz = item.kind === "Quiz";
@@ -71,14 +68,6 @@ function ItemCard({
               </div>
             </div>
             <div className="flex gap-1">
-              {isVideoLesson && (
-                <SubtitleManagementButton
-                  lessonId={item.id}
-                  lessonTitle={item.title}
-                  courseIsAiSupport={courseIsAiSupport}
-                  onSubtitleUpdated={onRefreshCourse}
-                />
-              )}
               <Button
                 onClick={() => onEdit(item)}
                 variant="ghost"

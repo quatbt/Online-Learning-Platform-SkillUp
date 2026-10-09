@@ -53,7 +53,9 @@ function AppRouter() {
             <ProtectedRoute
               allowedRoles={[
                 "Admin",
+                "ContentModerator",
                 "Content Morderator",
+                "SystemModerator",
                 "System Morderator",
                 "Lecturer",
                 "Student",

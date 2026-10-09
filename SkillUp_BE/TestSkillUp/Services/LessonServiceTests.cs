@@ -17,7 +17,6 @@ using SkillUp.Configuration;
 using SkillUp.Services.Common;
 using SkillUp.Services.Interfaces;
 using LessonSvc = SkillUp.Services.Implementations.LessonService;
-using SkillUp.Services.Rag.Subtitle;
 
 namespace TestSkillUp
 {
@@ -34,8 +33,6 @@ namespace TestSkillUp
 
         private Mock<FtpVideoUploadService> _ftpVideoUploadServiceMock = null!;
         private Mock<CloudinaryService> _cloudinaryServiceMock = null!;
-        private Mock<IQdrantService> _qdrantServiceMock = null!;
-        private Mock<IAiSupportBackgroundJobService> _aiSupportBackgroundJobServiceMock = null!;
 
         private ILessonService _sut = null!; // System Under Test
 
@@ -49,7 +46,6 @@ namespace TestSkillUp
             _studentRepositoryMock = new Mock<IStudentRepository>(MockBehavior.Strict);
             _studentProgressRepositoryMock = new Mock<IStudentProgressRepository>(MockBehavior.Strict);
             _notifyServiceMock = new Mock<INotifyService>(MockBehavior.Loose);
-            _aiSupportBackgroundJobServiceMock = new Mock<IAiSupportBackgroundJobService>(MockBehavior.Loose);
 
             // Các service này là class thường, nên dùng Mock với MockBehavior.Loose
             _ftpVideoUploadServiceMock =
@@ -65,9 +61,6 @@ namespace TestSkillUp
             _cloudinaryServiceMock =
                 new Mock<CloudinaryService>(MockBehavior.Loose, cloudinaryOptions);
 
-            // Mock IQdrantService
-            _qdrantServiceMock = new Mock<IQdrantService>(MockBehavior.Loose);
-
             _sut = new LessonSvc(
                 _lessonRepositoryMock.Object,
                 _sectionRepositoryMock.Object,
@@ -77,8 +70,6 @@ namespace TestSkillUp
                 _cloudinaryServiceMock.Object,
                 _studentRepositoryMock.Object,
                 _studentProgressRepositoryMock.Object,
-                _qdrantServiceMock.Object,
-                _aiSupportBackgroundJobServiceMock.Object,
                 _notifyServiceMock.Object
             );
         }
