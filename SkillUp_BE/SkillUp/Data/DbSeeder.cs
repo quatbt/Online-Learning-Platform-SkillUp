@@ -83,8 +83,8 @@ public static class DbSeeder
         // ── 2. Accounts ─────────────────────────────────────────────────────────
         if (!await db.Accounts.AnyAsync())
         {
-            // BCrypt hash of "Admin@123" — mật khẩu mặc định cho tất cả account seed
-            var pwHash = BCrypt.Net.BCrypt.HashPassword("Admin@123");
+            // BCrypt hash of "12345678@Abc" — mật khẩu mặc định cho tất cả account seed
+            var pwHash = BCrypt.Net.BCrypt.HashPassword("12345678@Abc");
 
             db.Accounts.AddRange(
                 new Account
